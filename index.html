@@ -1,0 +1,48 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Escape Room</title>
+  <link rel="stylesheet" href="theme.css">
+  <style>
+    body { font-family: sans-serif; padding: 20px; text-align: center; }
+    ul { list-style: none; padding: 0; }
+    li { margin: 10px 0; }
+    .secret { margin-top: 40px; color: transparent; cursor: pointer; user-select: none; }
+    .secret:hover { color: #ccc; }
+  </style>
+</head>
+<body>
+  <h1>🔐 Welcome to the Escape Room</h1>
+  <ul>
+    <li><a href="keypad-lock.html">Keypad Lock</a></li>
+    <li><a href="directional-lock.html">Directional Lock</a></li>
+    <li><a href="color-sequence-lock.html">Color Sequence Lock</a></li>
+    <li><a href="anagram-lock.html">Anagram Lock</a></li>
+    <li><a href="drag-to-slot-lock.html">Drag-to-Slot Lock</a></li>
+    <li><a href="logic-grid-lock.html">Logic Grid Lock</a></li>
+    <li><a href="multi-lock-panel.html">Multi Lock Panel</a></li>
+    <li><a href="hidden-object-lock.html">Hidden Object Lock</a></li>
+    <li><a href="room-escaped.html">ROOM ESCAPED 🎉</a></li>
+  </ul>
+
+  <div class="secret" onclick="revealDashboard()">.</div>
+
+  <script>
+    function revealDashboard() {
+      const pass = prompt("🔒 Enter Teacher Password:");
+      const timestamp = new Date().toLocaleString();
+      let log = JSON.parse(localStorage.getItem("accessAttempts") || "[]");
+      log.push({ time: timestamp, result: pass === "letmein" ? "Success" : "Fail" });
+      localStorage.setItem("accessAttempts", JSON.stringify(log));
+
+      if (pass === "letmein") {
+        window.location.href = "teacher-dashboard.html";
+      } else if (pass) {
+        alert("❌ Incorrect password.");
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Drag to Slot Lock</title>
+  <link rel="stylesheet" href="theme.css">
+  <style>
+    body { text-align: center; font-family: sans-serif; padding: 20px; }
+    .directions { font-weight: bold; margin-bottom: 10px; }
+    .lock-interface.locked { pointer-events: none; opacity: 0.5; }
+    .items, .slots {
+      display: flex; justify-content: center;
+      gap: 15px; flex-wrap: wrap;
+      margin: 20px 0;
+    }
+    .item, .slot {
+      width: 70px; height: 70px;
+      font-size: 1em;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid #333; background: #eee; user-select: none;
+    }
+    .slot { background: #ccc; }
+    #groupNameContainer { margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <h1>🧩 Drag to Slot Lock</h1>
+  <div class="directions">Drag the items into the correct order to solve the puzzle. You have 3 attempts.</div>
+
+  <div id="groupNameContainer">
+    <input type="text" id="groupNameInput" placeholder="Enter Group Name">
+    <button onclick="saveGroupName()">Start</button>
+  </div>
+
+  <div id="lockInterface" class="lock-interface locked">
+    <div id="items" class="items"></div>
+    <div id="slots" class="slots"></div>
+    <button onclick="submitSolution()">Submit</button>
+    <button onclick="resetPuzzle()">⟲ Reset</button>
+  </div>
+
+  <audio id="buzzer" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_bf696b0bba.mp3?filename=buzzer-wrong-answer-1-20582.mp3"></audio>
+  <audio id="celebrate" src="https://cdn.pixabay.com/download/audio/2022/03/01/audio_48e0b15a3c.mp3?filename=success-fanfare-trumpets-6185.mp3"></audio>
+
+  <script>
+    const CORRECT_ORDER = ["🌞", "🌳", "🏠", "🚗"];
+    let items = [];
+    let draggingItem = null;
+    let attempts = Number(localStorage.getItem("dragSlotAttempts")) || 0;
+    const maxAttempts = 3;
+
+    function saveGroupName() {
+      const name = document.getElementById("groupNameInput").value.trim();
+      if (!name) return;
+      localStorage.setItem("groupName", name);
+      document.getElementById("groupNameContainer").style.display = "none";
+      document.getElementById("lockInterface").classList.remove("locked");
+    }
+
+    function shuffle(array) {
+      let copy = array.slice();
+      while (true) {
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        if (copy.join("") !== array.join("")) break;
+      }
+      return copy;
+    }
+
+    function buildPuzzle() {
+      items = shuffle(CORRECT_ORDER);
+      const itemContainer = document.getElementById("items");
+      const slotContainer = document.getElementById("slots");
+      itemContainer.innerHTML = "";
+      slotContainer.innerHTML = "";
+
+      items.forEach((symbol, i) => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.textContent = symbol;
+        div.draggable = true;
+        div.id = `item-${i}`;
+        div.addEventListener("dragstart", (e) => {
+          draggingItem = div;
+        });
+        div.addEventListener("dragend", () => {
+          draggingItem = null;
+        });
+        itemContainer.appendChild(div);
+      });
+
+      for (let i = 0; i < CORRECT_ORDER.length; i++) {
+        const slot = document.createElement("div");
+        slot.className = "slot";
+        slot.dataset.index = i;
+        slot.addEventListener("dragover", (e) => e.preventDefault());
+        slot.addEventListener("drop", (e) => {
+          if (!draggingItem) return;
+          const clone = draggingItem.cloneNode(true);
+          clone.draggable = true;
+          clone.addEventListener("dragstart", (e) => {
+            draggingItem = clone;
+          });
+          clone.addEventListener("dragend", () => {
+            draggingItem = null;
+          });
+          e.target.innerHTML = "";
+          e.target.appendChild(clone);
+        });
+        slotContainer.appendChild(slot);
+      }
+    }
+
+    function resetPuzzle() {
+      buildPuzzle();
+    }
+
+    function submitSolution() {
+      if (attempts >= maxAttempts) return;
+
+      attempts++;
+      localStorage.setItem("dragSlotAttempts", attempts);
+
+      const slots = document.querySelectorAll(".slot");
+      let answer = [];
+      slots.forEach(slot => {
+        const child = slot.querySelector(".item");
+        answer.push(child ? child.textContent : "?");
+      });
+
+      if (JSON.stringify(answer) === JSON.stringify(CORRECT_ORDER)) {
+        document.getElementById("celebrate").play();
+        localStorage.setItem("dragSlotSolved", true);
+        alert("Unlocked!");
+      } else {
+        document.getElementById("buzzer").play();
+        if (attempts >= maxAttempts) {
+          alert("Out of attempts!");
+        } else {
+          alert("Incorrect. Try again.");
+        }
+      }
+    }
+
+    window.onload = () => {
+      const savedGroup = localStorage.getItem("groupName");
+      if (savedGroup) {
+        document.getElementById("groupNameInput").value = savedGroup;
+        saveGroupName();
+      }
+      buildPuzzle();
+    };
+  </script>
+</body>
+</html>

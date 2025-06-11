@@ -1,0 +1,170 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Color Sequence Lock</title>
+  <link rel="stylesheet" href="theme.css">
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    .directions { font-weight: bold; margin-bottom: 10px; }
+    .lock-interface.locked { pointer-events: none; opacity: 0.5; }
+    .shape-buttons, .sequence-display {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+    .shape-button {
+      width: 50px; height: 50px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    .circle { border-radius: 50%; }
+    .square { }
+    .triangle {
+      width: 0; height: 0;
+      border-left: 25px solid transparent;
+      border-right: 25px solid transparent;
+      border-bottom: 50px solid yellow;
+      background:none;
+      cursor:pointer;
+    }
+    .star {
+      width:50px; height:50px; font-size:40px; line-height:40px;
+      background:none; cursor:pointer;
+    }
+    .tracker-shape { width:50px; height:50px; }
+    .tracker-circle  { border-radius:50%; }
+    .tracker-square  { }
+    .tracker-triangle{
+      width:0; height:0;
+      border-left:25px solid transparent;
+      border-right:25px solid transparent;
+      border-bottom:50px solid;
+    }
+    .tracker-star{
+      width:50px; height:50px; font-size:40px; line-height:40px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎨 Color Sequence Lock</h1>
+  <div class="directions">Click the shapes/colors in the correct order. You have 3 attempts.</div>
+
+  <div id="groupNameContainer">
+    <input type="text" id="groupNameInput" placeholder="Enter Group Name">
+    <button onclick="saveGroupName()">Start</button>
+  </div>
+
+  <div id="lockInterface" class="lock-interface locked">
+    <div class="shape-buttons">
+      <div class="shape-button circle"   style="background:red"    onclick="addToSequence('red','circle')"></div>
+      <div class="shape-button square"   style="background:blue"   onclick="addToSequence('blue','square')"></div>
+      <div class="shape-button star"     style="color:orange"      onclick="addToSequence('orange','star')">★</div>
+      <div class="shape-button triangle"                            onclick="addToSequence('yellow','triangle')"></div>
+    </div>
+
+    <div class="sequence-display" id="sequenceDisplay"></div>
+
+    <div>
+      <button onclick="submitSequence()">Submit</button>
+      <button onclick="clearSequence()">⟲ Reset</button>
+    </div>
+    <p id="result"></p>
+  </div>
+
+  <audio id="buzzer" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_bf696b0bba.mp3?filename=buzzer-wrong-answer-1-20582.mp3"></audio>
+  <audio id="celebrate" src="https://cdn.pixabay.com/download/audio/2022/03/01/audio_48e0b15a3c.mp3?filename=success-fanfare-trumpets-6185.mp3"></audio>
+
+  <script>
+    const CORRECT_SEQUENCE = [
+      {color:'red', shape:'circle'},
+      {color:'blue', shape:'square'},
+      {color:'yellow', shape:'triangle'},
+      {color:'orange', shape:'star'}
+    ];
+    let currentSequence = [];
+    let attempts = Number(localStorage.getItem("colorAttempts")) || 0;
+    const maxAttempts = 3;
+
+    function saveGroupName(){
+      const name=document.getElementById("groupNameInput").value.trim();
+      if(!name) return;
+      localStorage.setItem("groupName",name);
+      document.getElementById("groupNameContainer").style.display="none";
+      document.getElementById("lockInterface").classList.remove("locked");
+      renderSequence();
+    }
+
+    function addToSequence(color,shape){
+      if(currentSequence.length>=CORRECT_SEQUENCE.length) return;
+      currentSequence.push({color,shape});
+      renderSequence();
+    }
+
+    function renderSequence(){
+      const seq=document.getElementById("sequenceDisplay");
+      seq.innerHTML="";
+      currentSequence.forEach(item=>{
+        let elem;
+        if(item.shape==='triangle'){
+          elem=document.createElement('div');
+          elem.className="tracker-shape tracker-triangle";
+          elem.style.borderBottomColor=item.color;
+        }else if(item.shape==='star'){
+          elem=document.createElement('div');
+          elem.className="tracker-shape tracker-star";
+          elem.textContent='★';
+          elem.style.color=item.color;
+        }else{
+          elem=document.createElement('div');
+          elem.className="tracker-shape tracker-"+item.shape;
+          elem.style.background=item.color;
+        }
+        seq.appendChild(elem);
+      });
+    }
+
+    function clearSequence(){
+      currentSequence=[];
+      renderSequence();
+      document.getElementById("result").textContent="";
+    }
+
+    function submitSequence(){
+      if(attempts>=maxAttempts) return;
+      attempts++;
+      localStorage.setItem("colorAttempts",attempts);
+
+      const isCorrect = JSON.stringify(currentSequence)===JSON.stringify(CORRECT_SEQUENCE);
+      const result=document.getElementById("result");
+      if(isCorrect){
+        localStorage.setItem("colorSolved",true);
+        document.getElementById("celebrate").play();
+        result.textContent="✅ Unlocked!";
+        document.body.classList.add("unlocked");
+      }else{
+        document.getElementById("buzzer").play();
+        if(attempts>=maxAttempts){
+          result.textContent="❌ LOCKED OUT!";
+          document.body.classList.add("lockedout");
+        }else{
+          result.textContent=`❌ Incorrect. (${attempts}/${maxAttempts})`;
+        }
+      }
+      currentSequence=[];
+      renderSequence();
+    }
+
+    window.onload=()=>{
+      const savedGroup=localStorage.getItem("groupName");
+      if(savedGroup){
+        document.getElementById("groupNameInput").value=savedGroup;
+        saveGroupName();
+      }
+    }
+  </script>
+</body>
+</html>

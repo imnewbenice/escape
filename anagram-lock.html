@@ -1,0 +1,162 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Anagram Lock</title>
+  <link rel="stylesheet" href="theme.css">
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    .directions { font-weight: bold; margin-bottom: 10px; }
+    .lock-interface.locked { pointer-events: none; opacity: 0.5; }
+    .tiles-container, .slots-container {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+    .tile, .slot {
+      width: 50px;
+      height: 50px;
+      font-size: 24px;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 2px solid #333;
+      border-radius: 6px;
+      background-color: #e0e0e0;
+      cursor: grab;
+    }
+    .slot {
+      background-color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔠 Anagram Lock</h1>
+  <div class="directions">Click and drag to rearrange the letters into the correct word. You have 3 attempts.</div>
+
+  <div id="groupNameContainer">
+    <input type="text" id="groupNameInput" placeholder="Enter Group Name">
+    <button onclick="saveGroupName()">Start</button>
+  </div>
+
+  <div id="lockInterface" class="lock-interface locked">
+    <div class="tiles-container" id="tilesContainer"></div>
+    <div class="slots-container" id="slotsContainer"></div>
+
+    <div>
+      <button onclick="submitAnagram()">Submit</button>
+      <button onclick="resetAnagram()">⟲ Reset</button>
+    </div>
+    <p id="result"></p>
+  </div>
+
+  <audio id="buzzer" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_bf696b0bba.mp3?filename=buzzer-wrong-answer-1-20582.mp3"></audio>
+  <audio id="celebrate" src="https://cdn.pixabay.com/download/audio/2022/03/01/audio_48e0b15a3c.mp3?filename=success-fanfare-trumpets-6185.mp3"></audio>
+
+  <script>
+    const CORRECT_WORD = "LEMON";
+    let shuffledWord = [];
+    let attempts = Number(localStorage.getItem("anagramAttempts")) || 0;
+    const maxAttempts = 3;
+
+    function saveGroupName() {
+      const name = document.getElementById("groupNameInput").value.trim();
+      if (!name) return;
+      localStorage.setItem("groupName", name);
+      document.getElementById("groupNameContainer").style.display = "none";
+      document.getElementById("lockInterface").classList.remove("locked");
+      setupAnagram();
+    }
+
+    function setupAnagram() {
+      const tiles = document.getElementById("tilesContainer");
+      const slots = document.getElementById("slotsContainer");
+      tiles.innerHTML = "";
+      slots.innerHTML = "";
+
+      shuffledWord = CORRECT_WORD.split("").sort(() => 0.5 - Math.random());
+      while (shuffledWord.join("") === CORRECT_WORD) {
+        shuffledWord = CORRECT_WORD.split("").sort(() => 0.5 - Math.random());
+      }
+
+      shuffledWord.forEach((char, i) => {
+        const tile = document.createElement("div");
+        tile.className = "tile";
+        tile.textContent = char;
+        tile.draggable = true;
+        tile.id = "tile_" + i;
+        tile.addEventListener("dragstart", dragStart);
+        tiles.appendChild(tile);
+      });
+
+      for (let i = 0; i < CORRECT_WORD.length; i++) {
+        const slot = document.createElement("div");
+        slot.className = "slot";
+        slot.id = "slot_" + i;
+        slot.addEventListener("dragover", allowDrop);
+        slot.addEventListener("drop", dropTile);
+        slots.appendChild(slot);
+      }
+    }
+
+    function allowDrop(e) {
+      e.preventDefault();
+    }
+
+    function dragStart(e) {
+      e.dataTransfer.setData("text/plain", e.target.id);
+    }
+
+    function dropTile(e) {
+      e.preventDefault();
+      const tileId = e.dataTransfer.getData("text/plain");
+      const draggedTile = document.getElementById(tileId);
+      e.target.innerHTML = "";  // Clear previous content
+      const clone = draggedTile.cloneNode(true);
+      clone.style.transform = "none"; // Prevent size distortion
+      clone.style.fontSize = "24px";
+      clone.style.cursor = "default";
+      clone.draggable = false;
+      e.target.appendChild(clone);
+    }
+
+    function resetAnagram() {
+      setupAnagram();
+      document.getElementById("result").textContent = "";
+    }
+
+    function submitAnagram() {
+      if (attempts >= maxAttempts) return;
+      const guess = Array.from(document.querySelectorAll(".slot"))
+                         .map(s => s.textContent.trim()).join("");
+      if (!guess || guess.length !== CORRECT_WORD.length) return;
+
+      attempts++;
+      localStorage.setItem("anagramAttempts", attempts);
+
+      if (guess === CORRECT_WORD) {
+        document.getElementById("celebrate").play();
+        localStorage.setItem("anagramSolved", true);
+        document.getElementById("result").textContent = "✅ Correct!";
+      } else {
+        document.getElementById("buzzer").play();
+        document.getElementById("result").textContent = attempts >= maxAttempts
+          ? "❌ Out of attempts!"
+          : `❌ Incorrect. (${attempts}/${maxAttempts})`;
+      }
+    }
+
+    window.onload = () => {
+      const savedGroup = localStorage.getItem("groupName");
+      if (savedGroup) {
+        document.getElementById("groupNameInput").value = savedGroup;
+        saveGroupName();
+      }
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Multi-Lock Panel</title>
+  <link rel="stylesheet" href="theme.css">
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    .directions { font-weight: bold; margin-bottom: 10px; }
+    .lock-interface.locked { pointer-events: none; opacity: 0.5; }
+    .lock-checklist { display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; margin: 20px 0; }
+    .lock-status {
+      padding: 15px 25px;
+      background: #eee;
+      border: 2px solid #333;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+    .solved { background-color: lightgreen; }
+    .unsolved { background-color: #fdd; }
+    #groupNameContainer { margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <h1>🔒 Multi-Lock Panel</h1>
+  <div class="directions">You must unlock all of the puzzles to complete this panel. You have 3 total checks.</div>
+
+  <div id="groupNameContainer">
+    <input type="text" id="groupNameInput" placeholder="Enter Group Name">
+    <button onclick="saveGroupName()">Start</button>
+  </div>
+
+  <div id="lockInterface" class="lock-interface locked">
+    <div class="lock-checklist" id="lockChecklist">
+      <!-- Locks dynamically inserted -->
+    </div>
+    <button onclick="checkLocks()">Check Panel</button>
+  </div>
+
+  <audio id="buzzer" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_bf696b0bba.mp3?filename=buzzer-wrong-answer-1-20582.mp3"></audio>
+  <audio id="celebrate" src="https://cdn.pixabay.com/download/audio/2022/03/01/audio_48e0b15a3c.mp3?filename=success-fanfare-trumpets-6185.mp3"></audio>
+
+  <script>
+    const LOCKS = [
+      { id: "keypadSolved", label: "🔢 Keypad" },
+      { id: "directionalSolved", label: "🧭 Directional" },
+      { id: "colorSolved", label: "🎨 Colors" },
+      { id: "anagramSolved", label: "🔠 Anagram" },
+      { id: "dragSlotSolved", label: "📦 Drag-to-Slot" },
+      { id: "logicGridSolved", label: "⚙️ Logic Grid" }
+    ];
+    let attempts = Number(localStorage.getItem("multiLockAttempts")) || 0;
+    const maxAttempts = 3;
+
+    function saveGroupName() {
+      const name = document.getElementById("groupNameInput").value.trim();
+      if (!name) return;
+      localStorage.setItem("groupName", name);
+      document.getElementById("groupNameContainer").style.display = "none";
+      document.getElementById("lockInterface").classList.remove("locked");
+      buildPanel();
+    }
+
+    function buildPanel() {
+      const panel = document.getElementById("lockChecklist");
+      panel.innerHTML = "";
+      LOCKS.forEach(lock => {
+        const div = document.createElement("div");
+        div.className = "lock-status";
+        div.id = lock.id;
+        div.textContent = lock.label;
+        panel.appendChild(div);
+      });
+    }
+
+    function checkLocks() {
+      if (attempts >= maxAttempts) return;
+      attempts++;
+      localStorage.setItem("multiLockAttempts", attempts);
+
+      let allSolved = true;
+      LOCKS.forEach(lock => {
+        const status = localStorage.getItem(lock.id) === "true";
+        const el = document.getElementById(lock.id);
+        if (status) {
+          el.classList.remove("unsolved");
+          el.classList.add("solved");
+        } else {
+          el.classList.remove("solved");
+          el.classList.add("unsolved");
+          allSolved = false;
+        }
+      });
+
+      if (allSolved) {
+        document.getElementById("celebrate").play();
+        alert("You unlocked the entire panel!");
+        localStorage.setItem("multiPanelSolved", true);
+      } else {
+        document.getElementById("buzzer").play();
+        if (attempts >= maxAttempts) {
+          alert("Out of checks! Try again later.");
+        } else {
+          alert("Some locks are still unsolved.");
+        }
+      }
+    }
+
+    window.onload = () => {
+      const savedGroup = localStorage.getItem("groupName");
+      if (savedGroup) {
+        document.getElementById("groupNameInput").value = savedGroup;
+        saveGroupName();
+      }
+    };
+  </script>
+</body>
+</html>

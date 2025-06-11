@@ -1,0 +1,126 @@
+
+/* CURRENT THEME IN EFFECT ON SETTINGS PAGE */
+body {
+  font-family: sans-serif;
+  padding: 20px;
+  margin: 0;
+  text-align: center;
+  background-color: #fdfdfd;
+}
+
+.unlocked {
+  background-color: #c8f7c5;
+  background-image: url('unlocked.png');
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: 150px;
+}
+
+.lockedout {
+  background-color: #f8b2b2;
+  background-image: url('lockedout-stamp.png');
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: 200px;
+}
+
+h1 {
+  font-size: 1.8em;
+  margin-bottom: 0.2em;
+}
+
+.directions {
+  font-weight: bold;
+  font-size: 1em;
+  margin-bottom: 1em;
+}
+
+.lock-interface {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1em;
+}
+
+input, button {
+  font-size: 1em;
+  padding: 0.5em;
+  margin: 0.5em;
+  border-radius: 0.3em;
+  border: 1px solid #aaa;
+}
+
+button {
+  background-color: #eee;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #ddd;
+}
+
+.sequence-display,
+.shape-buttons,
+.arrow-buttons,
+.keypad,
+.drag-area,
+.toggle-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 1em;
+}
+
+.shape-button,
+.arrow-button,
+.keypad-button,
+.drag-slot {
+  width: 50px;
+  height: 50px;
+}
+
+.tracker-shape {
+  width: 50px;
+  height: 50px;
+}
+
+#result {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-top: 1em;
+}
+
+/* MOBILE RESPONSIVE */
+@media screen and (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 1.5em;
+  }
+
+  .directions {
+    font-size: 0.9em;
+  }
+
+  input, button {
+    font-size: 1em;
+    padding: 0.4em;
+    margin: 0.4em;
+  }
+
+  .shape-button,
+  .arrow-button,
+  .keypad-button,
+  .drag-slot,
+  .tracker-shape {
+    width: 40px;
+    height: 40px;
+  }
+
+  .unlocked,
+  .lockedout {
+    background-size: 100px;
+  }
+}

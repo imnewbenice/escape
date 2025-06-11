@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🎉 You Escaped!</title>
+  <link rel="stylesheet" href="theme.css">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      overflow: hidden;
+      flex-direction: column;
+    }
+    h1 {
+      font-size: 3em;
+      margin-bottom: 20px;
+    }
+    .confetti {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      background: url('https://media.giphy.com/media/26AHONQ79FdWZhAI0/giphy.gif') center center no-repeat;
+      background-size: cover;
+      opacity: 0.5;
+    }
+    #sendBtn {
+      margin-top: 30px;
+      padding: 10px 20px;
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎉 YOU ESCAPED! 🎉</h1>
+  <div class="confetti"></div>
+
+  <button id="sendBtn" onclick="sendEmail()">📬 Send Progress to Teacher</button>
+
+  <audio autoplay>
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/01/audio_48e0b15a3c.mp3?filename=success-fanfare-trumpets-6185.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    function sendEmail() {
+      const group = localStorage.getItem('groupName') || 'Unnamed Group';
+      const locks = ['keypad', 'color', 'anagram', 'directional', 'dragslot', 'logicgrid', 'multi', 'hidden'];
+      let body = `Group Name: ${group}%0D%0A`;
+
+      let solvedCount = 0;
+      locks.forEach(lock => {
+        const solved = localStorage.getItem(lock + 'Solved');
+        const attempts = localStorage.getItem(lock + 'Attempts') || '0';
+        const status = solved === 'true' ? `✅ Solved in ${attempts} attempt(s)` :
+                      (attempts >= 3 ? `❌ Failed after ${attempts} attempts` : `❌ In progress (${attempts})`);
+        if (solved === 'true') solvedCount++;
+        body += `${lock.charAt(0).toUpperCase() + lock.slice(1)} Lock: ${status}%0D%0A`;
+      });
+
+      body += `%0D%0ATotal Solved: ${solvedCount} of ${locks.length}%0D%0A`;
+
+      const subject = `Escape Room Progress – ${group}`;
+      const mailtoLink = `mailto:gturnbull@aguafria.org?subject=${encodeURIComponent(subject)}&body=${body}`;
+      window.location.href = mailtoLink;
+    }
+  </script>
+</body>
+</html>

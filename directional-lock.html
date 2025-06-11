@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Directional Lock</title>
+  <link rel="stylesheet" href="theme.css">
+  <style>
+    body { text-align: center; padding: 20px; font-family: sans-serif; }
+    .directions { font-weight: bold; margin-bottom: 10px; }
+    .lock-interface.locked { pointer-events: none; opacity: 0.5; }
+    .arrows { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+    .arrow-btn { font-size: 1.5em; padding: 15px 25px; border-radius: 10px; }
+    #sequenceDisplay { font-size: 1.2em; margin: 15px 0; }
+  </style>
+</head>
+<body>
+  <h1>🧭 Directional Lock</h1>
+  <div class="directions">Click the arrows to enter the correct direction sequence. You have 3 attempts.</div>
+
+  <div id="groupNameContainer">
+    <input type="text" id="groupNameInput" placeholder="Enter Group Name">
+    <button onclick="saveGroupName()">Start</button>
+  </div>
+
+  <div id="lockInterface" class="lock-interface locked">
+    <div id="sequenceDisplay"></div>
+    <div class="arrows">
+      <button class="arrow-btn" onclick="press('↑')">↑</button>
+      <button class="arrow-btn" onclick="press('↓')">↓</button>
+      <button class="arrow-btn" onclick="press('←')">←</button>
+      <button class="arrow-btn" onclick="press('→')">→</button>
+    </div>
+    <button onclick="clearSequence()">⟲ Clear</button>
+    <button onclick="submitSequence()">Submit</button>
+  </div>
+
+  <audio id="buzzer" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_bf696b0bba.mp3?filename=buzzer-wrong-answer-1-20582.mp3"></audio>
+  <audio id="celebrate" src="https://cdn.pixabay.com/download/audio/2022/03/01/audio_48e0b15a3c.mp3?filename=success-fanfare-trumpets-6185.mp3"></audio>
+
+  <script>
+    const CORRECT_SEQUENCE = "↑→↓←";
+    let input = "";
+    let attempts = Number(localStorage.getItem("directionalAttempts")) || 0;
+    const maxAttempts = 3;
+
+    function saveGroupName() {
+      const name = document.getElementById("groupNameInput").value.trim();
+      if (!name) return;
+      localStorage.setItem("groupName", name);
+      document.getElementById("groupNameContainer").style.display = "none";
+      document.getElementById("lockInterface").classList.remove("locked");
+    }
+
+    function press(dir) {
+      if (attempts >= maxAttempts) return;
+      input += dir;
+      document.getElementById("sequenceDisplay").textContent = input;
+    }
+
+    function clearSequence() {
+      input = "";
+      document.getElementById("sequenceDisplay").textContent = "";
+    }
+
+    function submitSequence() {
+      if (attempts >= maxAttempts) return;
+
+      attempts++;
+      localStorage.setItem("directionalAttempts", attempts);
+
+      if (input === CORRECT_SEQUENCE) {
+        document.getElementById("celebrate").play();
+        localStorage.setItem("directionalSolved", true);
+        alert("Unlocked!");
+      } else {
+        document.getElementById("buzzer").play();
+        if (attempts >= maxAttempts) {
+          alert("Out of attempts!");
+        } else {
+          alert("Incorrect. Try again.");
+        }
+      }
+
+      clearSequence();
+    }
+
+    window.onload = () => {
+      const savedGroup = localStorage.getItem("groupName");
+      if (savedGroup) {
+        document.getElementById("groupNameInput").value = savedGroup;
+        saveGroupName();
+      }
+    };
+  </script>
+</body>
+</html>

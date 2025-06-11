@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Teacher Dashboard</title>
+  <link rel="stylesheet" href="theme.css">
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    h1 { text-align: center; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #333;
+      text-align: center;
+    }
+    th {
+      background-color: #444;
+      color: white;
+    }
+    .solved {
+      background-color: #b2f2b2;
+    }
+    .unsolved {
+      background-color: #f8b2b2;
+    }
+    #accessLogModal {
+      position: fixed;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      border: 2px solid #444;
+      padding: 20px;
+      width: 400px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      z-index: 10;
+      display: none;
+    }
+    #accessLogModal h3 {
+      margin-top: 0;
+    }
+    #accessLogModal ul {
+      list-style: none;
+      padding: 0;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    #accessLogModal li {
+      border-bottom: 1px solid #ccc;
+      padding: 5px 0;
+    }
+    #closeLog {
+      float: right;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>📋 Teacher Dashboard</h1>
+  <button onclick="showAccessLogs()">📜 View Access Logs</button>
+
+  <table id="reportTable">
+    <thead>
+      <tr>
+        <th>Group Name</th>
+        <th>Keypad</th>
+        <th>Directional</th>
+        <th>Color</th>
+        <th>Anagram</th>
+        <th>Drag-Slot</th>
+        <th>Logic</th>
+        <th>Multi</th>
+        <th>Hidden</th>
+      </tr>
+    </thead>
+    <tbody id="reportBody"></tbody>
+  </table>
+
+  <div id="accessLogModal">
+    <span id="closeLog" onclick="document.getElementById('accessLogModal').style.display='none'">✖</span>
+    <h3>Access Attempt Log</h3>
+    <ul id="accessLogList"></ul>
+  </div>
+
+  <script>
+    const LOCK_KEYS = [
+      { id: "keypad", label: "Keypad" },
+      { id: "directional", label: "Directional" },
+      { id: "color", label: "Color" },
+      { id: "anagram", label: "Anagram" },
+      { id: "dragSlot", label: "Drag-Slot" },
+      { id: "logicGrid", label: "Logic" },
+      { id: "multiPanel", label: "Multi" },
+      { id: "hidden", label: "Hidden" }
+    ];
+
+    function loadGroupReport() {
+      const tbody = document.getElementById("reportBody");
+      const group = localStorage.getItem("groupName") || "Unknown Group";
+      const tr = document.createElement("tr");
+
+      const tdGroup = document.createElement("td");
+      tdGroup.textContent = group;
+      tr.appendChild(tdGroup);
+
+      LOCK_KEYS.forEach(lock => {
+        const solved = localStorage.getItem(lock.id + "Solved") === "true";
+        const attempts = localStorage.getItem(lock.id + "Attempts") || 0;
+        const td = document.createElement("td");
+        td.className = solved ? "solved" : "unsolved";
+        td.textContent = `${solved ? "✅" : "❌"} (${attempts})`;
+        tr.appendChild(td);
+      });
+
+      tbody.appendChild(tr);
+    }
+
+    function showAccessLogs() {
+      const log = JSON.parse(localStorage.getItem("accessAttempts") || "[]");
+      const list = document.getElementById("accessLogList");
+      list.innerHTML = "";
+      if (log.length === 0) {
+        list.innerHTML = "<li>No access attempts recorded.</li>";
+      } else {
+        log.forEach(entry => {
+          const li = document.createElement("li");
+          li.textContent = `${entry.time}: ${entry.result}`;
+          list.appendChild(li);
+        });
+      }
+      document.getElementById("accessLogModal").style.display = "block";
+    }
+
+    window.onload = loadGroupReport;
+  </script>
+</body>
+</html>
