@@ -10,39 +10,53 @@
       padding: 20px;
       text-align: center;
     }
-    ul {
-      list-style: none;
-      padding: 0;
+
+    h1 {
+      margin-bottom: 20px;
     }
-    li {
-      margin: 10px 0;
+
+    .lock-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      max-width: 600px;
+      margin: 0 auto;
     }
-    .secret {
-      margin-top: 40px;
-      color: transparent;
-      cursor: pointer;
+
+    .lock-buttons a {
+      display: inline-block;
+      padding: 15px 25px;
+      font-size: 1.1em;
+      text-decoration: none;
+      color: white;
+      background-color: #007bff;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: background-color 0.3s ease;
       user-select: none;
     }
-    .secret:hover {
-      color: #ccc;
+
+    .lock-buttons a:hover {
+      background-color: #0056b3;
     }
   </style>
 </head>
 <body>
   <h1>🔐 Welcome to the Escape Room</h1>
-  <ul>
-    <li><a href="locks/keypad-lock.html">Keypad Lock</a></li>
-    <li><a href="locks/directional-lock.html">Directional Lock</a></li>
-    <li><a href="locks/color-sequence-lock.html">Color Sequence Lock</a></li>
-    <li><a href="locks/anagram-lock.html">Anagram Lock</a></li>
-    <li><a href="locks/drag-to-slot-lock.html">Drag-to-Slot Lock</a></li>
-    <li><a href="locks/logic-grid-lock.html">Logic Grid Lock</a></li>
-    <li><a href="locks/multi-lock-panel.html">Multi Lock Panel</a></li>
-    <li><a href="locks/hidden-object-lock.html">Hidden Object Lock</a></li>
-    <li><a href="locks/room-escaped.html">ROOM ESCAPED 🎉</a></li>
-  </ul>
+  <div class="lock-buttons">
+    <a href="locks/keypad-lock.html">Keypad Lock</a>
+    <a href="locks/directional-lock.html">Directional Lock</a>
+    <a href="locks/color-sequence-lock.html">Color Sequence Lock</a>
+    <a href="locks/anagram-lock.html">Anagram Lock</a>
+    <a href="locks/drag-to-slot-lock.html">Drag-to-Slot Lock</a>
+    <a href="locks/logic-grid-lock.html">Logic Grid Lock</a>
+    <a href="locks/multi-lock-panel.html">Multi Lock Panel</a>
+    <a href="locks/hidden-object-lock.html">Hidden Object Lock</a>
+    <a href="locks/room-escaped.html">ROOM ESCAPED 🎉</a>
+  </div>
 
-  <div class="secret" onclick="revealDashboard()">.</div>
+  <div class="secret" onclick="revealDashboard()" style="margin-top: 40px; color: transparent; cursor: pointer; user-select: none;">.</div>
 
   <script>
     function revealDashboard() {
