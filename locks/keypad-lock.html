@@ -6,13 +6,136 @@
   <link rel="stylesheet" href="../theme.css" />
   <style>
     body { text-align: center; padding: 20px; font-family: sans-serif; }
-    .keypad { display: grid; grid-template-columns: repeat(3, 80px); gap: 10px; justify-content: center; margin-top: 20px; }
-    button { padding: 20px; font-size: 1.5em; }
-    #display { font-size: 1.5em; margin-top: 10px; margin-bottom: 20px; }
+    #display {
+      font-size: 1.5em;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      min-height: 2em;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 4px;
+      letter-spacing: 0.15em;
+      user-select: none;
+    }
     #groupNameContainer { margin-bottom: 20px; }
     .locked { pointer-events: none; opacity: 0.5; }
     .directions { font-weight: bold; margin-bottom: 10px; }
     #result { font-weight: bold; font-size: 1.2em; margin-top: 10px; min-height: 1.4em; }
+    #lockInterface {
+      position: relative;
+      max-width: 280px;
+      margin: 0 auto;
+    }
+
+    /* Keypad style */
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 60px);
+      grid-gap: 10px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+
+    .keypad button {
+      padding: 15px 0;
+      font-size: 1.3em;
+      border-radius: 8px;
+      border: 2px solid #333;
+      background-color: #f0f0f0;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.2s ease;
+    }
+
+    .keypad button:hover:not(:disabled) {
+      background-color: #ddd;
+    }
+
+    #submitBtn {
+      margin-top: 15px;
+      padding: 10px 30px;
+      font-size: 1.1em;
+      border-radius: 8px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    #submitBtn:hover:not(:disabled) {
+      background-color: #45a049;
+    }
+
+    .clear-btn {
+      margin-left: 15px;
+      padding: 10px 20px;
+      font-size: 1.1em;
+      border-radius: 8px;
+      background-color: #f44336;
+      color: white;
+      border: none;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .clear-btn:hover {
+      background-color: #da190b;
+    }
+
+    /* Locked out overlay */
+    #lockoutOverlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+      border-radius: 8px;
+      flex-direction: column;
+      user-select: none;
+    }
+
+    #lockoutOverlay img {
+      max-width: 150px;
+      max-height: 150px;
+      filter: drop-shadow(0 0 10px red);
+    }
+
+    #lockoutOverlay .overlay-text-lock {
+      color: #ff4444;
+      font-weight: bold;
+      font-size: 2em;
+      text-shadow: 0 0 10px #ff4444;
+      margin-top: 0.5em;
+      text-align: center;
+      line-height: 1.2em;
+    }
+
+    /* Unlocked overlay */
+    #unlockOverlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 50, 0, 0.85);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 15;
+      border-radius: 8px;
+      color: #a6ffa6;
+      font-weight: bold;
+      font-size: 2em;
+      text-shadow: 0 0 10px #88ff88;
+      user-select: none;
+      gap: 0.5em;
+    }
+
+    #unlockOverlay img {
+      max-width: 150px;
+      max-height: 150px;
+      filter: drop-shadow(0 0 10px limegreen);
+    }
   </style>
 </head>
 <body>
@@ -20,27 +143,45 @@
   <div class="directions">Click the digits to enter the code. You have 3 attempts.</div>
 
   <div id="groupNameContainer">
-    <input type="text" id="groupNameInput" placeholder="Enter Group Name" />
+    <input type="text" id="groupNameInput" placeholder="Enter Group Name" autocomplete="off" />
     <button onclick="startChallenge()">Start</button>
   </div>
 
   <div id="lockInterface" class="locked">
     <div id="display"></div>
+
     <div class="keypad">
       <button onclick="press('1')">1</button>
       <button onclick="press('2')">2</button>
       <button onclick="press('3')">3</button>
+
       <button onclick="press('4')">4</button>
       <button onclick="press('5')">5</button>
       <button onclick="press('6')">6</button>
+
       <button onclick="press('7')">7</button>
       <button onclick="press('8')">8</button>
       <button onclick="press('9')">9</button>
-      <button onclick="clearEntry()">⟲</button>
+
+      <button onclick="press('*')">*</button>
       <button onclick="press('0')">0</button>
-      <button onclick="submitCode()">Submit</button>
+      <button onclick="press('#')">#</button>
     </div>
+
+    <button id="submitBtn" onclick="submitCode()">Submit</button>
+    <button onclick="clearEntry()" class="clear-btn">Clear</button>
+
     <div id="result"></div>
+
+    <!-- Overlays -->
+    <div id="lockoutOverlay">
+      <img src="../assets/locked.png" alt="Locked Out" />
+      <div class="overlay-text-lock">FAILURE<br>ENGAGE LOCKOUT</div>
+    </div>
+    <div id="unlockOverlay">
+      <img src="../assets/unlocked.png" alt="Unlocked" />
+      <div>SUCCESSFULLY UNLOCKED</div>
+    </div>
   </div>
 
   <audio id="buzzer" src="../assets/buzzer.mp3"></audio>
@@ -71,17 +212,31 @@
         if (solved) {
           showUnlocked();
           disableLock();
+          showUnlockOverlay(true);
+          showOverlay(false);
         } else if (attempts >= maxAttempts) {
           showLockedOut();
           disableLock();
-        } else {
+          showUnlockOverlay(false);
+          showOverlay(true);
+        } else if (attempts > 0) {
           showAttemptMessage(attempts, maxAttempts);
+          showUnlockOverlay(false);
+          showOverlay(false);
+        } else {
+          const result = document.getElementById("result");
+          if (result) result.textContent = "Enter code to begin";
+          showUnlockOverlay(false);
+          showOverlay(false);
         }
       } catch (error) {
         console.error(error);
         attempts = 0;
         solved = false;
-        showAttemptMessage(attempts, maxAttempts);
+        const result = document.getElementById("result");
+        if (result) result.textContent = "Enter code to begin";
+        showUnlockOverlay(false);
+        showOverlay(false);
       }
     }
 
@@ -104,18 +259,25 @@
       if (attempts >= maxAttempts || solved) return;
 
       attempts++;
+
       if (entry === CORRECT_CODE) {
         solved = true;
         showUnlocked();
         disableLock();
+        showUnlockOverlay(true);
+        showOverlay(false);
       } else {
         if (attempts >= maxAttempts) {
           showLockedOut();
           disableLock();
+          showUnlockOverlay(false);
+          showOverlay(true);
         } else {
           showAttemptMessage(attempts, maxAttempts);
           const buzzer = document.getElementById("buzzer");
           if (buzzer) buzzer.play();
+          showUnlockOverlay(false);
+          showOverlay(false);
         }
       }
 
@@ -126,6 +288,16 @@
       }
 
       clearEntry();
+    }
+
+    function showOverlay(show) {
+      const overlay = document.getElementById("lockoutOverlay");
+      if (overlay) overlay.style.display = show ? "flex" : "none";
+    }
+
+    function showUnlockOverlay(show) {
+      const overlay = document.getElementById("unlockOverlay");
+      if (overlay) overlay.style.display = show ? "flex" : "none";
     }
   </script>
 </body>
