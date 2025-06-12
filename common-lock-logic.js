@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://your-apps-script-webapp-url';  // Replace with your deployed Apps Script URL
+const API_BASE_URL = 'https://script.google.com/macros/s/AKfycbwLsPA823kSpsoEi5Ms6KnqHIbqEZHxD3uqOztdWPOesuijZqYCir0uiAIVfkO6gN7zeA/execl';  // Replace with your deployed Apps Script URL
 const SECRET_TOKEN = 'yourSecret123';  // Replace with your secret token
 
 function showUnlocked() {
