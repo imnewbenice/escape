@@ -7,48 +7,59 @@
   <style>
     body { text-align: center; padding: 20px; font-family: sans-serif; }
     #display {
-      font-size: 1.5em;
-      margin-top: 10px;
-      margin-bottom: 10px;
-      min-height: 2em;
+      font-family: monospace, monospace;
+      font-size: 1.6em;
       border: 3px solid #444;
       border-radius: 10px;
-      padding-bottom: 4px;
-      letter-spacing: 0.15em;
+      padding: 6px 15px;
+      width: 200px;
+      margin: 15px auto 10px auto;
+      letter-spacing: 0.3em;
       user-select: none;
       background-color: #fff;
       box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      min-height: 2em;
+      line-height: 1.1;
+      text-align: center;
     }
-  #groupNameContainer {
-  margin-bottom: 20px;
-  position: relative;   /* enable z-index */
-  z-index: 20;          /* place above overlays */
-}
 
-.locked {
-  pointer-events: none;
-  opacity: 0.5;
-}
+    #groupNameContainer {
+      position: relative;
+      z-index: 20;
+      background-color: #fff;
+      padding: 10px 15px;
+      border-radius: 8px;
+      max-width: 300px;
+      margin: 20px auto 15px auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
 
-.directions {
-  font-weight: bold;
-  margin-bottom: 10px;
-}
+    .locked {
+      pointer-events: none;
+      opacity: 0.5;
+    }
 
-#result {
-  font-weight: bold;
-  font-size: 1.2em;
-  margin-top: 10px;
-  min-height: 1.4em;
-}
+    .directions {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
 
-#lockInterface {
-  position: relative;
-  max-width: 280px;
-  margin: 0 auto;
-  z-index: 10;          /* overlays and lockInterface below group input */
-}
+    #result {
+      font-weight: bold;
+      font-size: 1.2em;
+      margin-top: 10px;
+      min-height: 1.4em;
+    }
 
+    #lockInterface {
+      position: relative;
+      z-index: 10;
+      max-width: 280px;
+      margin: 0 auto;
+      background-color: #222;
+      border-radius: 12px;
+      padding: 20px 15px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
     }
 
     /* Keypad container */
@@ -56,31 +67,29 @@
       background-color: #333;
       border-radius: 12px;
       padding: 20px;
-      display: inline-block;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
-      margin: 20px auto;
+      margin: 0 auto;
+      box-shadow: none;
     }
 
     /* Keypad style */
-  .keypad {
-  display: grid;
-  grid-template-columns: repeat(3, 60px); /* keep original button width */
-  grid-gap: 2px 2px; /* less vertical and horizontal gap */
-  justify-content: center;
-  margin: 5px auto;
-}
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 60px);
+      grid-gap: 5px 6px;
+      justify-content: center;
+      margin: 15px auto;
+    }
 
-.keypad button {
-  padding: 15px 0;
-  font-size: 1.3em;
-  border-radius: 8px;
-  border: 2px solid #999;
-  background-color: #eee;
-  cursor: pointer;
-  user-select: none;
-  transition: background-color 0.2s ease;
-}
-
+    .keypad button {
+      padding: 15px 0;
+      font-size: 1.3em;
+      border-radius: 8px;
+      border: 2px solid #999;
+      background-color: #eee;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.2s ease;
+    }
 
     .keypad button:hover:not(:disabled) {
       background-color: #ddd;
@@ -227,7 +236,7 @@
     </div>
   </div>
 
-  <audio id="buzzer" src="../assets/incorrect.mp3"></audio>
+  <audio id="incorrect" src="../assets/incorrect.mp3"></audio>
   <audio id="celebrate" src="../assets/celebrate.mp3"></audio>
 
   <script src="../common-lock-logic.js"></script>
@@ -325,8 +334,8 @@
           showOverlay(true);
         } else {
           showAttemptMessage(attempts, maxAttempts);
-          const buzzer = document.getElementById("buzzer");
-          if (buzzer) buzzer.play();
+          const incorrectSound = document.getElementById("incorrect");
+          if (incorrectSound) incorrectSound.play();
           showUnlockOverlay(false);
           showOverlay(false);
         }
