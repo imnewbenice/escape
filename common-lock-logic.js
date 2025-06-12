@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://your-apps-script-webapp-url';  // Replace with your actual URL
+const API_BASE_URL = 'https://your-apps-script-webapp-url';  // Replace with your deployed Apps Script URL
 const SECRET_TOKEN = 'yourSecret123';  // Replace with your secret token
 
 function showUnlocked() {
@@ -63,4 +63,40 @@ async function saveProgress(groupName, lockName, attempts, solved) {
   });
   if (!response.ok) throw new Error('Failed to save progress');
   return response.json();
+}
+
+/**
+ * Prompt teacher password and show reset button if correct
+ */
+function promptTeacherPassword() {
+  const password = prompt("Enter teacher password to unlock reset:");
+  if (password === SECRET_TOKEN) {
+    const btn = document.getElementById("resetBtn");
+    if (btn) btn.style.display = "inline-block";
+    alert("Reset button enabled.");
+  } else if (password) {
+    alert("Incorrect password.");
+  }
+}
+
+/**
+ * Reset all progress by calling backend reset endpoint
+ */
+async function resetAllProgress() {
+  try {
+    const response = await fetch(API_BASE_URL + '/resetProgress', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: SECRET_TOKEN }),
+    });
+    const data = await response.json();
+    if (data.status === 'ok') {
+      alert("All progress has been reset.");
+      location.reload();
+    } else {
+      alert("Reset failed: " + data.message);
+    }
+  } catch (error) {
+    alert("Error resetting progress: " + error.message);
+  }
 }
