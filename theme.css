@@ -1,3 +1,6 @@
+/* ----------------------------- */
+/* This styles the entire page body: font, padding, and background color */
+/* ----------------------------- */
 body {
   font-family: sans-serif;
   padding: 20px;
@@ -6,33 +9,49 @@ body {
   background-color: #fdfdfd;
 }
 
+/* ----------------------------- */
+/* Styles for unlocked state background color only (no background image to avoid duplicates) */
+/* ----------------------------- */
 .unlocked {
   background-color: #c8f7c5;
-  /* background-image removed to avoid duplicate */
 }
 
+/* ----------------------------- */
+/* Styles for locked out state background color only (no background image to avoid duplicates) */
+/* ----------------------------- */
 .lockedout {
   background-color: #f8b2b2;
-  /* background-image removed to avoid duplicate */
 }
 
+/* ----------------------------- */
+/* Headings styling */
+/* ----------------------------- */
 h1 {
   font-size: 1.8em;
   margin-bottom: 0.2em;
 }
 
+/* ----------------------------- */
+/* Directions text */
+/* ----------------------------- */
 .directions {
   font-weight: bold;
   font-size: 1em;
-  margin-bottom: 2em;
+  margin-bottom: 1em;
 }
 
+/* ----------------------------- */
+/* Container for lock interface - max width, centered */
+/* ----------------------------- */
 .lock-interface {
   max-width: 600px;
   margin: 0 auto;
   padding: 1em;
 }
 
+/* ----------------------------- */
+/* Base styling for inputs and buttons */
+/* ----------------------------- */
 input, button {
   font-size: 1em;
   padding: 0.5em;
@@ -50,6 +69,9 @@ button:hover {
   background-color: #ddd;
 }
 
+/* ----------------------------- */
+/* Various container styles for shapes, keypad, etc. */
+/* ----------------------------- */
 .sequence-display,
 .shape-buttons,
 .arrow-buttons,
@@ -63,6 +85,9 @@ button:hover {
   margin-top: 1em;
 }
 
+/* ----------------------------- */
+/* Buttons and slots sizes */
+/* ----------------------------- */
 .shape-button,
 .arrow-button,
 .keypad-button,
@@ -76,13 +101,18 @@ button:hover {
   height: 50px;
 }
 
+/* ----------------------------- */
+/* Result message area */
+/* ----------------------------- */
 #result {
   font-size: 1.2em;
   font-weight: bold;
   margin-top: 1em;
 }
 
-/* MOBILE RESPONSIVE */
+/* ----------------------------- */
+/* MOBILE RESPONSIVE adjustments */
+/* ----------------------------- */
 @media screen and (max-width: 600px) {
   body {
     padding: 10px;
