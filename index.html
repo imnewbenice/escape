@@ -16,13 +16,14 @@
     }
 
     .lock-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 15px;
-      max-width: 600px;
-      margin: 0 auto;
-    }
+  display: flex;
+  flex-direction: column;  /* Stack buttons vertically */
+  align-items: center;     /* Center buttons horizontally */
+  gap: 15px;               /* Space between buttons */
+  max-width: 300px;        /* Optional: limit max width */
+  margin: 0 auto;          /* Center container horizontally */
+}
+
 
     .lock-buttons a {
       display: inline-block;
