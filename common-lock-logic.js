@@ -11,7 +11,7 @@ function showUnlocked() {
 
 function showLockedOut() {
   document.body.classList.add("lockedout");
-  const failSound = document.getElementById("buzzer");
+  const failSound = document.getElementById("incorrect");
   if (failSound) failSound.play();
   const result = document.getElementById("result");
   if (result) result.textContent = "❌ LOCKED OUT!";
