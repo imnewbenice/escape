@@ -21,7 +21,7 @@
 
   <div id="groupNameContainer">
     <input type="text" id="groupNameInput" placeholder="Enter Group Name" />
-    <button onclick="saveGroupName()">Start</button>
+    <button onclick="startChallenge()">Start</button>
   </div>
 
   <div id="lockInterface" class="locked">
@@ -50,20 +50,47 @@
   <script>
     const CORRECT_CODE = "1234";
     let entry = "";
-    let attempts = Number(localStorage.getItem("keypadAttempts")) || 0;
+    let attempts = 0;
+    let solved = false;
     const maxAttempts = 3;
+    let groupName = "";
+    const lockName = "keypad-lock";
 
-    function saveGroupName() {
-      const name = document.getElementById("groupNameInput").value.trim();
-      if (!name) return;
-      localStorage.setItem("groupName", name);
+    async function startChallenge() {
+      groupName = document.getElementById("groupNameInput").value.trim();
+      if (!groupName) return;
+
       document.getElementById("groupNameContainer").style.display = "none";
       document.getElementById("lockInterface").classList.remove("locked");
-      loadGroupName();
+
+      try {
+        const data = await loadProgress(groupName, lockName);
+        attempts = data.attempts || 0;
+        solved = data.solved || false;
+
+        if (solved) {
+          showUnlocked();
+          disableLock();
+        } else if (attempts >= maxAttempts) {
+          showLockedOut();
+          disableLock();
+        } else {
+          showAttemptMessage(attempts, maxAttempts);
+        }
+      } catch (error) {
+        console.error(error);
+        attempts = 0;
+        solved = false;
+        showAttemptMessage(attempts, maxAttempts);
+      }
+    }
+
+    function disableLock() {
+      document.getElementById("lockInterface").classList.add("locked");
     }
 
     function press(digit) {
-      if (attempts >= maxAttempts) return;
+      if (attempts >= maxAttempts || solved) return;
       entry += digit;
       document.getElementById("display").textContent = entry;
     }
@@ -73,36 +100,33 @@
       document.getElementById("display").textContent = "";
     }
 
-    function submitCode() {
-      if (attempts >= maxAttempts) return;
+    async function submitCode() {
+      if (attempts >= maxAttempts || solved) return;
 
       attempts++;
-      localStorage.setItem("keypadAttempts", attempts);
-
       if (entry === CORRECT_CODE) {
+        solved = true;
         showUnlocked();
-        localStorage.setItem("keypadSolved", true);
+        disableLock();
       } else {
         if (attempts >= maxAttempts) {
           showLockedOut();
+          disableLock();
         } else {
           showAttemptMessage(attempts, maxAttempts);
+          const buzzer = document.getElementById("buzzer");
+          if (buzzer) buzzer.play();
         }
+      }
+
+      try {
+        await saveProgress(groupName, lockName, attempts, solved);
+      } catch (error) {
+        console.error("Failed to save progress:", error);
       }
 
       clearEntry();
     }
-
-    window.onload = () => {
-      const savedGroup = localStorage.getItem("groupName");
-      if (savedGroup) {
-        document.getElementById("groupNameInput").value = savedGroup;
-        saveGroupName();
-      }
-      if (attempts >= maxAttempts) {
-        showLockedOut();
-      }
-    };
   </script>
 </body>
 </html>
