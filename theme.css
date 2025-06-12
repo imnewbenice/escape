@@ -1,5 +1,3 @@
-/* CURRENT THEME IN EFFECT ON SETTINGS PAGE */
-
 body {
   font-family: sans-serif;
   padding: 20px;
@@ -10,18 +8,12 @@ body {
 
 .unlocked {
   background-color: #c8f7c5;
-  background-image: url('assets/unlocked.png');
-  background-repeat: no-repeat;
-  background-position: center top;
-  background-size: 150px;
+  /* background-image removed to avoid duplicate */
 }
 
 .lockedout {
   background-color: #f8b2b2;
-  background-image: url('assets/locked.png');
-  background-repeat: no-repeat;
-  background-position: center top;
-  background-size: 200px;
+  /* background-image removed to avoid duplicate */
 }
 
 h1 {
@@ -121,6 +113,6 @@ button:hover {
 
   .unlocked,
   .lockedout {
-    background-size: 100px;
+    /* background-size unchanged but no background image */
   }
 }
