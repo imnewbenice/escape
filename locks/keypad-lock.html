@@ -76,6 +76,11 @@
       background-color: #45a049;
     }
 
+    #submitBtn:disabled {
+      background-color: #999;
+      cursor: not-allowed;
+    }
+
     .clear-btn {
       margin-left: 15px;
       padding: 10px 20px;
@@ -180,7 +185,7 @@
       </div>
     </div>
 
-    <button id="submitBtn" onclick="submitCode()">Submit</button>
+    <button id="submitBtn" onclick="submitCode()" disabled>Submit</button>
     <button onclick="clearEntry()" class="clear-btn">Clear</button>
 
     <div id="result"></div>
@@ -213,8 +218,13 @@
       groupName = document.getElementById("groupNameInput").value.trim();
       if (!groupName) return;
 
+      localStorage.setItem("groupName", groupName);
+
       document.getElementById("groupNameContainer").style.display = "none";
       document.getElementById("lockInterface").classList.remove("locked");
+
+      const submitBtn = document.getElementById("submitBtn");
+      submitBtn.disabled = false;
 
       try {
         const data = await loadProgress(groupName, lockName);
@@ -253,7 +263,10 @@
     }
 
     function disableLock() {
-      document.getElementById("lockInterface").classList.add("locked");
+      const lockInterface = document.getElementById("lockInterface");
+      const submitBtn = document.getElementById("submitBtn");
+      if (lockInterface) lockInterface.classList.add("locked");
+      if (submitBtn) submitBtn.disabled = true;
     }
 
     function press(digit) {
@@ -311,6 +324,14 @@
       const overlay = document.getElementById("unlockOverlay");
       if (overlay) overlay.style.display = show ? "flex" : "none";
     }
+
+    window.onload = () => {
+      const savedGroup = localStorage.getItem("groupName");
+      if (savedGroup) {
+        document.getElementById("groupNameInput").value = savedGroup;
+        startChallenge();
+      }
+    };
   </script>
 </body>
 </html>
