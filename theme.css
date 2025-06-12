@@ -18,7 +18,7 @@ body {
 
 .lockedout {
   background-color: #f8b2b2;
-  background-image: url('assets/lockedout-stamp.png');
+  background-image: url('assets/locked.png');
   background-repeat: no-repeat;
   background-position: center top;
   background-size: 200px;
