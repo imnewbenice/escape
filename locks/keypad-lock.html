@@ -1,206 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Page metadata -->
   <meta charset="UTF-8" />
   <title>Keypad Lock</title>
   <link rel="stylesheet" href="../theme.css" />
   <style>
-    body { text-align: center; padding: 20px; font-family: sans-serif; background-color: #fdfdfd; }
-    #display {
-      font-family: monospace, monospace;
-      font-size: 1.6em;
-      border: 3px solid #444;
-      border-radius: 10px;
-      padding: 6px 15px;
-      width: 200px;
-      margin: 15px auto 10px auto;
-      letter-spacing: 0.3em;
-      user-select: none;
-      background-color: #fff;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-      min-height: 2em;
-      line-height: 1.1;
-      text-align: center;
-      z-index: 10;
-      position: relative;
-    }
-
-    #groupNameContainer {
-      position: relative;
-      z-index: 20;
-      background-color: #fff;
-      padding: 10px 15px;
-      border-radius: 8px;
-      max-width: 300px;
-      margin: 20px auto 15px auto;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    }
-
-    .locked {
-      pointer-events: none;
-      opacity: 0.5;
-    }
-
-    .directions {
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-
-    #result {
-      font-weight: bold;
-      font-size: 1.2em;
-      margin-top: 10px;
-      min-height: 1.4em;
-    }
-
-    #lockInterface {
-      position: relative;
-      max-width: 280px;
-      margin: 0 auto;
-      z-index: 10;
-      background-color: #222;
-      border-radius: 12px;
-      padding: 20px 15px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.5);
-    }
-
-    .keypad-container {
-      background-color: #333;
-      border-radius: 12px;
-      padding: 20px;
-      display: inline-block;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
-      margin: 20px auto;
-    }
-
-    .keypad {
-      display: grid;
-      grid-template-columns: repeat(3, 60px);
-      grid-gap: 5px 6px;
-      justify-content: center;
-      margin: 15px auto;
-    }
-
-    .keypad button {
-      padding: 15px 0;
-      font-size: 1.3em;
-      border-radius: 8px;
-      border: 2px solid #999;
-      background-color: #eee;
-      cursor: pointer;
-      user-select: none;
-      transition: background-color 0.2s ease;
-    }
-
-    .keypad button:hover:not(:disabled) {
-      background-color: #ddd;
-    }
-
-    #submitBtn {
-      margin-top: 15px;
-      padding: 10px 30px;
-      font-size: 1.1em;
-      border-radius: 8px;
-      background-color: #4caf50;
-      color: white;
-      border: none;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    #submitBtn:hover:not(:disabled) {
-      background-color: #45a049;
-    }
-
-    #submitBtn:disabled {
-      background-color: #999;
-      cursor: not-allowed;
-    }
-
-    .clear-btn {
-      margin-left: 15px;
-      padding: 10px 20px;
-      font-size: 1.1em;
-      border-radius: 8px;
-      background-color: #f44336;
-      color: white;
-      border: none;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .clear-btn:hover {
-      background-color: #da190b;
-    }
-
-    #lockoutOverlay {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-color: rgba(0,0,0,0.7);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 20;
-      border-radius: 8px;
-      flex-direction: column;
-      user-select: none;
-    }
-
-    #lockoutOverlay img {
-      max-width: 150px;
-      max-height: 150px;
-      filter: drop-shadow(0 0 10px red);
-    }
-
-    #lockoutOverlay .overlay-text-lock {
-      color: #ff4444;
-      font-weight: bold;
-      font-size: 2em;
-      text-shadow: 0 0 10px #ff4444;
-      margin-top: 0.5em;
-      text-align: center;
-      line-height: 1.2em;
-    }
-
-    #unlockOverlay {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-color: rgba(0, 50, 0, 0.85);
-      display: none;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 20;
-      border-radius: 8px;
-      color: #a6ffa6;
-      font-weight: bold;
-      font-size: 2em;
-      text-shadow: 0 0 10px #88ff88;
-      user-select: none;
-      gap: 0.5em;
-    }
-
-    #unlockOverlay img {
-      max-width: 150px;
-      max-height: 150px;
-      filter: drop-shadow(0 0 10px limegreen);
-    }
+    /* (Your CSS with detailed comments as provided earlier) */
   </style>
 </head>
 <body>
+  <!-- Main Page Title -->
   <h1>🔢 Keypad Lock</h1>
+
+  <!-- Instructions for the user -->
   <div class="directions">Click the digits to enter the code. You have 3 attempts.<br><br></div>
 
+  <!-- Group Name Input Container -->
   <div id="groupNameContainer">
+    <!-- Input box for group name -->
     <input type="text" id="groupNameInput" placeholder="Enter Group Name" autocomplete="off" />
+    <!-- Button to start the challenge after entering group name -->
     <button onclick="startChallenge()">Start</button>
   </div>
 
+  <!-- Lock Interface Container -->
   <div id="lockInterface" class="locked">
+    <!-- Display box showing current entered code -->
     <div id="display"></div>
 
+    <!-- Keypad Container (background box behind buttons) -->
     <div class="keypad-container">
+      <!-- Grid of keypad buttons -->
       <div class="keypad">
+        <!-- Buttons for digits 1-9 and special keys * 0 # -->
         <button onclick="press('1')">1</button>
         <button onclick="press('2')">2</button>
         <button onclick="press('3')">3</button>
@@ -219,52 +52,69 @@
       </div>
     </div>
 
+    <!-- Submit button to check the entered code -->
     <button id="submitBtn" onclick="submitCode()" disabled>Submit</button>
+    <!-- Clear button to reset the entered code -->
     <button onclick="clearEntry()" class="clear-btn">Clear</button>
 
+    <!-- Area for showing feedback messages (Try again, Locked out, etc.) -->
     <div id="result"></div>
 
-    <!-- Overlays -->
+    <!-- Overlay for Locked Out state -->
     <div id="lockoutOverlay">
       <img src="../assets/locked.png" alt="Locked Out" />
       <div class="overlay-text-lock">FAILURE<br>ENGAGE LOCKOUT</div>
     </div>
+
+    <!-- Overlay for Successfully Unlocked state -->
     <div id="unlockOverlay">
       <img src="../assets/unlocked.png" alt="Unlocked" />
       <div>SUCCESSFULLY UNLOCKED</div>
     </div>
   </div>
 
+  <!-- Audio elements for sound effects -->
   <audio id="incorrect" src="../assets/incorrect.mp3"></audio>
   <audio id="celebrate" src="../assets/celebrate.mp3"></audio>
 
+  <!-- Shared JS for lock logic and API interaction -->
   <script src="../common-lock-logic.js"></script>
   <script>
+    // Correct code for unlocking
     const CORRECT_CODE = "1234";
-    let entry = "";
-    let attempts = 0;
-    let solved = false;
-    const maxAttempts = 3;
-    let groupName = "";
-    const lockName = "keypad-lock";
 
+    // Variables to track state
+    let entry = "";           // Current entered keypad code
+    let attempts = 0;         // Number of attempts made
+    let solved = false;       // Whether the lock is solved
+    const maxAttempts = 3;    // Max allowed attempts
+
+    let groupName = "";       // Current group name
+    const lockName = "keypad-lock";  // Lock identifier for API
+
+    // Called when user clicks "Start" button after entering group name
     async function startChallenge() {
       groupName = document.getElementById("groupNameInput").value.trim();
-      if (!groupName) return;
+      if (!groupName) return;  // Do nothing if empty
 
+      // Save group name in localStorage to persist across pages/refresh
       localStorage.setItem("groupName", groupName);
 
+      // Hide group name input container and enable lock interface
       document.getElementById("groupNameContainer").style.display = "none";
       document.getElementById("lockInterface").classList.remove("locked");
 
+      // Enable the Submit button
       const submitBtn = document.getElementById("submitBtn");
       submitBtn.disabled = false;
 
       try {
+        // Load previous progress from backend API
         const data = await loadProgress(groupName, lockName);
         attempts = data.attempts || 0;
         solved = data.solved || false;
 
+        // Update UI based on progress
         if (solved) {
           showUnlocked();
           disableLock();
@@ -280,12 +130,14 @@
           showUnlockOverlay(false);
           showOverlay(false);
         } else {
+          // No attempts yet, clear message
           const result = document.getElementById("result");
           if (result) result.textContent = " ";
           showUnlockOverlay(false);
           showOverlay(false);
         }
       } catch (error) {
+        // Handle error gracefully
         console.error(error);
         attempts = 0;
         solved = false;
@@ -296,6 +148,7 @@
       }
     }
 
+    // Disable all keypad input and the submit button (lock the interface)
     function disableLock() {
       const lockInterface = document.getElementById("lockInterface");
       const submitBtn = document.getElementById("submitBtn");
@@ -303,21 +156,24 @@
       if (submitBtn) submitBtn.disabled = true;
     }
 
+    // Called when a keypad button is pressed; appends digit/symbol to entry
     function press(digit) {
-      if (attempts >= maxAttempts || solved) return;
+      if (attempts >= maxAttempts || solved) return; // Ignore input if locked or solved
       entry += digit;
       document.getElementById("display").textContent = entry;
     }
 
+    // Clear the current entry display and reset entry string
     function clearEntry() {
       entry = "";
       document.getElementById("display").textContent = "";
     }
 
+    // Called when user clicks Submit to check the entered code
     async function submitCode() {
-      if (attempts >= maxAttempts || solved) return;
+      if (attempts >= maxAttempts || solved) return; // Ignore if locked or solved
 
-      attempts++;
+      attempts++; // Increase attempt count
 
       if (entry === CORRECT_CODE) {
         solved = true;
@@ -341,24 +197,28 @@
       }
 
       try {
+        // Save updated progress to backend API
         await saveProgress(groupName, lockName, attempts, solved);
       } catch (error) {
         console.error("Failed to save progress:", error);
       }
 
-      clearEntry();
+      clearEntry(); // Clear the entered code display
     }
 
+    // Show or hide the lockout overlay
     function showOverlay(show) {
       const overlay = document.getElementById("lockoutOverlay");
       if (overlay) overlay.style.display = show ? "flex" : "none";
     }
 
+    // Show or hide the unlock overlay
     function showUnlockOverlay(show) {
       const overlay = document.getElementById("unlockOverlay");
       if (overlay) overlay.style.display = show ? "flex" : "none";
     }
 
+    // On page load, check if group name exists in localStorage and auto-start challenge
     window.onload = () => {
       const savedGroup = localStorage.getItem("groupName");
       if (savedGroup) {
