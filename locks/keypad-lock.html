@@ -1,181 +1,190 @@
-/* Reset and base styles */
-body {
-  text-align: center;
-  padding: 20px;
-  font-family: sans-serif;
-  background-color: #fdfdfd;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Keypad Lock</title>
+  <link rel="stylesheet" href="../theme.css" />
+  <style>
+    body { text-align: center; padding: 20px; font-family: sans-serif; background-color: #fdfdfd; }
+    #display {
+      font-family: monospace, monospace;
+      font-size: 1.6em;
+      border: 3px solid #444;
+      border-radius: 10px;
+      padding: 6px 15px;
+      width: 200px;
+      margin: 15px auto 10px auto;
+      letter-spacing: 0.3em;
+      user-select: none;
+      background-color: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      min-height: 2em;
+      line-height: 1.1;
+      text-align: center;
+      z-index: 10;
+      position: relative;
+    }
 
-/* Group name input container */
-#groupNameContainer {
-  position: relative;
-  z-index: 100; /* highest so it's always on top */
-  background-color: white;
-  max-width: 320px;
-  margin: 0 auto 20px auto;
-  padding: 12px 20px;
-  border-radius: 10px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-}
+    #groupNameContainer {
+      position: relative;
+      z-index: 20;
+      background-color: #fff;
+      padding: 10px 15px;
+      border-radius: 8px;
+      max-width: 300px;
+      margin: 20px auto 15px auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
 
-/* Display the entered code */
-#display {
-  font-family: monospace, monospace;
-  font-size: 1.6em;
-  border: 3px solid #444;
-  border-radius: 10px;
-  padding: 6px 15px;
-  width: 200px;
-  margin: 0 auto 10px auto;
-  letter-spacing: 0.3em;
-  user-select: none;
-  background-color: #fff;
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.15);
-  min-height: 2em;
-  line-height: 1.1;
-  text-align: center;
-  z-index: 10;
-  position: relative;
-}
+    .locked {
+      pointer-events: none;
+      opacity: 0.5;
+    }
 
-/* Lock interface container with keypad */
-#lockInterface {
-  position: relative;
-  z-index: 10;
-  max-width: 320px;
-  margin: 0 auto;
-  background-color: #222;
-  border-radius: 12px;
-  padding: 20px 15px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    .directions {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
 
+    #result {
+      font-weight: bold;
+      font-size: 1.2em;
+      margin-top: 10px;
+      min-height: 1.4em;
+    }
 
-/* Keypad container */
-.keypad-container {
-  background-color: #333;
-  border-radius: 12px;
-  padding: 20px;
-  margin: 0 auto;
-  box-shadow: none;
-}
+    #lockInterface {
+      position: relative;
+      max-width: 280px;
+      margin: 0 auto;
+      z-index: 10;
+      background-color: #222;
+      border-radius: 12px;
+      padding: 20px 15px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
 
-/* Keypad buttons layout */
-.keypad {
-  display: grid;
-  grid-template-columns: repeat(3, 60px);
-  grid-gap: 5px 6px;
-  justify-content: center;
-  margin: 15px auto 0 auto;
-}
+    .keypad-container {
+      background-color: #333;
+      border-radius: 12px;
+      padding: 20px;
+      display: inline-block;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      margin: 20px auto;
+    }
 
-/* Keypad buttons style */
-.keypad button {
-  padding: 15px 0;
-  font-size: 1.3em;
-  border-radius: 8px;
-  border: 2px solid #999;
-  background-color: #eee;
-  cursor: pointer;
-  user-select: none;
-  transition: background-color 0.2s ease;
-}
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 60px);
+      grid-gap: 5px 6px;
+      justify-content: center;
+      margin: 15px auto;
+    }
 
-.keypad button:hover:not(:disabled) {
-  background-color: #ddd;
-}
+    .keypad button {
+      padding: 15px 0;
+      font-size: 1.3em;
+      border-radius: 8px;
+      border: 2px solid #999;
+      background-color: #eee;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.2s ease;
+    }
 
-/* Submit and Clear buttons */
-#submitBtn {
-  margin-top: 15px;
-  padding: 10px 30px;
-  font-size: 1.1em;
-  border-radius: 8px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  cursor: pointer;
-  user-select: none;
-}
+    .keypad button:hover:not(:disabled) {
+      background-color: #ddd;
+    }
 
-#submitBtn:hover:not(:disabled) {
-  background-color: #45a049;
-}
+    #submitBtn {
+      margin-top: 15px;
+      padding: 10px 30px;
+      font-size: 1.1em;
+      border-radius: 8px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      user-select: none;
+    }
 
-#submitBtn:disabled {
-  background-color: #999;
-  cursor: not-allowed;
-}
+    #submitBtn:hover:not(:disabled) {
+      background-color: #45a049;
+    }
 
-.clear-btn {
-  margin-left: 15px;
-  padding: 10px 20px;
-  font-size: 1.1em;
-  border-radius: 8px;
-  background-color: #f44336;
-  color: white;
-  border: none;
-  cursor: pointer;
-  user-select: none;
-}
+    #submitBtn:disabled {
+      background-color: #999;
+      cursor: not-allowed;
+    }
 
-.clear-btn:hover {
-  background-color: #da190b;
-}
+    .clear-btn {
+      margin-left: 15px;
+      padding: 10px 20px;
+      font-size: 1.1em;
+      border-radius: 8px;
+      background-color: #f44336;
+      color: white;
+      border: none;
+      cursor: pointer;
+      user-select: none;
+    }
 
-/* Locked overlay */
-#lockoutOverlay {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: rgba(0,0,0,0.7);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 20; /* higher than everything */
-  border-radius: 8px;
-  flex-direction: column;
-  user-select: none;
-}
+    .clear-btn:hover {
+      background-color: #da190b;
+    }
 
-#lockoutOverlay img {
-  max-width: 150px;
-  max-height: 150px;
-  filter: drop-shadow(0 0 10px red);
-}
+    #lockoutOverlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 20;
+      border-radius: 8px;
+      flex-direction: column;
+      user-select: none;
+    }
 
-#lockoutOverlay .overlay-text-lock {
-  color: #ff4444;
-  font-weight: bold;
-  font-size: 2em;
-  text-shadow: 0 0 10px #ff4444;
-  margin-top: 0.5em;
-  text-align: center;
-  line-height: 1.2em;
-}
+    #lockoutOverlay img {
+      max-width: 150px;
+      max-height: 150px;
+      filter: drop-shadow(0 0 10px red);
+    }
 
-/* Unlocked overlay */
-#unlockOverlay {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: rgba(0, 50, 0, 0.85);
-  display: none;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 20; /* higher than everything */
-  border-radius: 8px;
-  color: #a6ffa6;
-  font-weight: bold;
-  font-size: 2em;
-  text-shadow: 0 0 10px #88ff88;
-  user-select: none;
-  gap: 0.5em;
-}
+    #lockoutOverlay .overlay-text-lock {
+      color: #ff4444;
+      font-weight: bold;
+      font-size: 2em;
+      text-shadow: 0 0 10px #ff4444;
+      margin-top: 0.5em;
+      text-align: center;
+      line-height: 1.2em;
+    }
 
-#unlockOverlay img {
-  max-width: 150px;
-  max-height: 150px;
-  filter: drop-shadow(0 0 10px limegreen);
-}
+    #unlockOverlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 50, 0, 0.85);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 20;
+      border-radius: 8px;
+      color: #a6ffa6;
+      font-weight: bold;
+      font-size: 2em;
+      text-shadow: 0 0 10px #88ff88;
+      user-select: none;
+      gap: 0.5em;
+    }
+
+    #unlockOverlay img {
+      max-width: 150px;
+      max-height: 150px;
+      filter: drop-shadow(0 0 10px limegreen);
+    }
   </style>
 </head>
 <body>
