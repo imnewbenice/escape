@@ -37,24 +37,25 @@
     }
 
     /* Keypad style */
-    .keypad {
-      display: grid;
-      grid-template-columns: repeat(3, 60px);
-      grid-gap: 3px;
-      justify-content: center;
-    }
+  .keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 60px); /* keep original button width */
+  grid-gap: 5px 6px; /* less vertical and horizontal gap */
+  justify-content: center;
+  margin: 20px auto;
+}
 
-    .keypad button {
-      background-color: #eee;
-      color: #000;
-      border: 2px solid #999;
-      border-radius: 8px;
-      padding: 5px 0;
-      font-size: 1.3em;
-      cursor: pointer;
-      user-select: none;
-      transition: background-color 0.2s ease;
-    }
+.keypad button {
+  padding: 15px 0;
+  font-size: 1.3em;
+  border-radius: 8px;
+  border: 2px solid #999;
+  background-color: #eee;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
 
     .keypad button:hover:not(:disabled) {
       background-color: #ddd;
