@@ -1,5 +1,5 @@
-
 /* CURRENT THEME IN EFFECT ON SETTINGS PAGE */
+
 body {
   font-family: sans-serif;
   padding: 20px;
@@ -10,7 +10,7 @@ body {
 
 .unlocked {
   background-color: #c8f7c5;
-  background-image: url('unlocked.png');
+  background-image: url('assets/unlocked.png');
   background-repeat: no-repeat;
   background-position: center top;
   background-size: 150px;
@@ -18,7 +18,7 @@ body {
 
 .lockedout {
   background-color: #f8b2b2;
-  background-image: url('lockedout-stamp.png');
+  background-image: url('assets/lockedout-stamp.png');
   background-repeat: no-repeat;
   background-position: center top;
   background-size: 200px;
