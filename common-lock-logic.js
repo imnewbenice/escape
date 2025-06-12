@@ -19,7 +19,7 @@ function showLockedOut() {
 
 function showAttemptMessage(attempts, maxAttempts) {
   const result = document.getElementById("result");
-  if (result) result.textContent = `❌ Try again. (${attempts}/${maxAttempts})`;
+  if (result) result.textContent = `❌ INCORRECT. Attempts remaining before lockout: (${attempts}/${maxAttempts})`;
 }
 
 function loadGroupName() {
